@@ -9,6 +9,9 @@ x, t = spiral.load_data()
 print('x', x.shape)  # (300, 2)
 print('t', t.shape)  # (300, 3)
 
+print(x[0:5])
+print(t[0:5])
+
 # データ点のプロット
 N = 100
 CLS_NUM = 3
