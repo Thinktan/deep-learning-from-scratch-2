@@ -16,6 +16,11 @@ C = create_co_matrix(corpus, vocab_size, window_size)
 print('calculating PPMI ...')
 W = ppmi(C, verbose=True)
 
+print(corpus.shape)
+print(vocab_size)
+print(C.shape)
+print(W.shape)
+
 print('calculating SVD ...')
 try:
     # truncated SVD (fast!)
@@ -27,6 +32,9 @@ except ImportError:
     U, S, V = np.linalg.svd(W)
 
 word_vecs = U[:, :wordvec_size]
+print(word_vecs.shape)
+print(word_vecs[0])
+
 
 querys = ['you', 'year', 'car', 'toyota']
 for query in querys:

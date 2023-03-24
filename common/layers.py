@@ -80,6 +80,9 @@ class SoftmaxWithLoss:
         loss = cross_entropy_error(self.y, self.t)
         return loss
 
+    # 假设batch_size = 5
+    # 输出纬度是7
+    # dx size: 5*7
     def backward(self, dout=1):
         batch_size = self.t.shape[0]
 
@@ -87,6 +90,10 @@ class SoftmaxWithLoss:
         dx[np.arange(batch_size), self.t] -= 1
         dx *= dout
         dx = dx / batch_size
+
+        # print(dx.shape)
+        # print(dx)
+        # print('-----======-----')
 
         return dx
 
