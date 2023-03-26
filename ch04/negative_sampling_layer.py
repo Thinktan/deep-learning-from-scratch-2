@@ -13,6 +13,8 @@ class EmbeddingDot:
         self.grads = self.embed.grads
         self.cache = None
 
+    # h: 中间层的神经元
+    # idx: 单词ID的NumPy数组(idx)
     def forward(self, h, idx):
         target_W = self.embed.forward(idx)
         out = np.sum(target_W * h, axis=1)
