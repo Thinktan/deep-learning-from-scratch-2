@@ -4,6 +4,11 @@ from common.layers import *
 from common.functions import softmax, sigmoid
 
 
+# 批大小：N
+# 输入向量维数：D
+# 隐藏状态向量维数：H
+# h(t-1) * W(h) + X(t) * W(x) = h(t)
+# N x H    HxH    NxD    DxH    NxH
 class RNN:
     def __init__(self, Wx, Wh, b):
         self.params = [Wx, Wh, b]
@@ -42,15 +47,25 @@ class TimeRNN:
         self.grads = [np.zeros_like(Wx), np.zeros_like(Wh), np.zeros_like(b)]
         self.layers = None
 
+        # h保存调用forward方法时的最后一个RNN层的隐藏状态
+        # dh保存调用backward方法时，传给前一个块的隐藏状态的梯度
         self.h, self.dh = None, None
         self.stateful = stateful
 
     def forward(self, xs):
+        # 批大小：N
+        # 输入向量维数：D
+        # 隐藏状态向量维数：H
+        # h(t-1) * W(h) + X(t) * W(x) = h(t)
+        # N x H    HxH    NxD    DxH    NxH
+
+        # T: T个时序数据
         Wx, Wh, b = self.params
         N, T, D = xs.shape
         D, H = Wx.shape
 
         self.layers = []
+        # hs: 输出容器，用于存放每个RNN层的输出
         hs = np.empty((N, T, H), dtype='f')
 
         if not self.stateful or self.h is None:
@@ -69,6 +84,7 @@ class TimeRNN:
         N, T, H = dhs.shape
         D, H = Wx.shape
 
+        # dxs: 传递给下游的梯度的容器
         dxs = np.empty((N, T, D), dtype='f')
         dh = 0
         grads = [0, 0, 0]
