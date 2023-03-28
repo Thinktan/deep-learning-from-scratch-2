@@ -54,12 +54,12 @@ class TimeRNN:
 
     def forward(self, xs):
         # 批大小：N
+        # T: T个时序数据
         # 输入向量维数：D
         # 隐藏状态向量维数：H
         # h(t-1) * W(h) + X(t) * W(x) = h(t)
         # N x H    HxH    NxD    DxH    NxH
 
-        # T: T个时序数据
         Wx, Wh, b = self.params
         N, T, D = xs.shape
         D, H = Wx.shape
@@ -249,7 +249,12 @@ class TimeEmbedding:
         self.W = W
 
     def forward(self, xs):
+        # N：mini-batch size
+        # T: 时序数据size
         N, T = xs.shape
+
+        # V: 词汇表数量
+        # D: 向量维度
         V, D = self.W.shape
 
         out = np.empty((N, T, D), dtype='f')

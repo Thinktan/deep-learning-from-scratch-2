@@ -9,6 +9,7 @@ from simple_rnnlm import SimpleRnnlm
 
 
 # ハイパーパラメータの設定
+# 设定超参数
 batch_size = 10
 wordvec_size = 100
 hidden_size = 100
@@ -17,17 +18,23 @@ lr = 0.1
 max_epoch = 100
 
 # 学習データの読み込み（データセットを小さくする）
+# 读入训练数据（缩小了数据集）
 corpus, word_to_id, id_to_word = ptb.load_data('train')
 corpus_size = 1000
-corpus = corpus[:corpus_size]
+corpus = corpus[:corpus_size] # 截取前面1000个单词
 vocab_size = int(max(corpus) + 1)
 
-xs = corpus[:-1]  # 入力
-ts = corpus[1:]  # 出力（教師ラベル）
+# print(corpus[:-2])
+# exit(0)
+
+xs = corpus[:-1]  # 入力 输入
+ts = corpus[1:]  # 出力（教師ラベル） 输出（监督标签）
 data_size = len(xs)
 print('corpus size: %d, vocabulary size: %d' % (corpus_size, vocab_size))
+# exit(0)
 
 # 学習時に使用する変数
+# 学习用的参数
 max_iters = data_size // (batch_size * time_size)
 time_idx = 0
 total_loss = 0
@@ -35,16 +42,19 @@ loss_count = 0
 ppl_list = []
 
 # モデルの生成
+# 生成模型
 model = SimpleRnnlm(vocab_size, wordvec_size, hidden_size)
 optimizer = SGD(lr)
 
 # ミニバッチの各サンプルの読み込み開始位置を計算
+# 1 计算读入mini-batch的各比样本数据的开始位置
 jump = (corpus_size - 1) // batch_size
 offsets = [i * jump for i in range(batch_size)]
 
 for epoch in range(max_epoch):
     for iter in range(max_iters):
         # ミニバッチの取得
+        # 2 获取mini-batch
         batch_x = np.empty((batch_size, time_size), dtype='i')
         batch_t = np.empty((batch_size, time_size), dtype='i')
         for t in range(time_size):
@@ -54,6 +64,7 @@ for epoch in range(max_epoch):
             time_idx += 1
 
         # 勾配を求め、パラメータを更新
+        # 计算梯度，更新参数
         loss = model.forward(batch_x, batch_t)
         model.backward()
         optimizer.update(model.params, model.grads)
@@ -61,6 +72,7 @@ for epoch in range(max_epoch):
         loss_count += 1
 
     # エポックごとにパープレキシティの評価
+    # 各个epoch的困惑度评价
     ppl = np.exp(total_loss / loss_count)
     print('| epoch %d | perplexity %.2f'
           % (epoch+1, ppl))
