@@ -20,10 +20,13 @@ class BetterRnnlm(BaseModel):
         V, D, H = vocab_size, wordvec_size, hidden_size
         rn = np.random.randn
 
-        embed_W = (rn(V, D) / 100).astype('f')
+        # NxD * Dx4H + NxD * Dx4H = Nx4H
+        embed_W = (rn(V, D) / 100).astype('f') # emb层的参数，v个参数，每个词汇向量维度为D
         lstm_Wx1 = (rn(D, 4 * H) / np.sqrt(D)).astype('f')
         lstm_Wh1 = (rn(H, 4 * H) / np.sqrt(H)).astype('f')
         lstm_b1 = np.zeros(4 * H).astype('f')
+
+        # NxH * Hx4H + NxH * Hx4H = Nx4H
         lstm_Wx2 = (rn(H, 4 * H) / np.sqrt(H)).astype('f')
         lstm_Wh2 = (rn(H, 4 * H) / np.sqrt(H)).astype('f')
         lstm_b2 = np.zeros(4 * H).astype('f')

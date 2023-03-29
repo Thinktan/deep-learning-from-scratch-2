@@ -90,6 +90,8 @@ class TimeRNN:
         grads = [0, 0, 0]
         for t in reversed(range(T)):
             layer = self.layers[t]
+            # 在正向传播存在分叉的情况下，在反向传播时各梯度将被求和。
+            # 因此，在反向传播时，流向RNN层的是求和后的梯度。
             dx, dh = layer.backward(dhs[:, t, :] + dh)
             dxs[:, t, :] = dx
 
